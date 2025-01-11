@@ -5,6 +5,14 @@ const News = require("../models/newsModel");
 const upload = require("../utils/multer"); 
 const router = express.Router();
 
+// Public routes to view news
+router.get("/today", getTodayNews);  // Make sure '/today' is first
+router.get("/", getAllNews);
+router.get("/:id", getSingleNews);  // '/:id' should come after '/today'
+
+// Admin-only route to add news
+router.post("/", protect, addNews);
+
 // Admin-only route to add news (including image upload)
 router.post("/", protect, upload.single('image'), async (req, res) => {
   try {
@@ -24,14 +32,6 @@ router.post("/", protect, upload.single('image'), async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
-
-// Admin-only route to add news
-router.post("/", protect, addNews);
-
-// Public routes to view news
-router.get("/", getAllNews);
-router.get("/:id", getSingleNews);
-router.get("/today", getTodayNews);
 
 // Update News Post
 router.put("/:id", protect, upload.single("image"), async (req, res) => {
@@ -62,16 +62,16 @@ router.put("/:id", protect, upload.single("image"), async (req, res) => {
   }
 });
   
-  router.delete("/:id", protect, async (req, res) => {
-    try {
-      const news = await News.findByIdAndDelete(req.params.id);
-      if (!news) {
-        return res.status(404).json({ message: "News not found" });
-      }
-      res.status(200).json({ message: "News deleted successfully" });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const news = await News.findByIdAndDelete(req.params.id);
+    if (!news) {
+      return res.status(404).json({ message: "News not found" });
     }
-  });
+    res.status(200).json({ message: "News deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 module.exports = router;

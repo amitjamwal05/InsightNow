@@ -26,7 +26,9 @@ exports.getTodayNews = async (req, res) => {
   const startOfDay = new Date(today.setHours(0, 0, 0, 0));
   const endOfDay = new Date(today.setHours(23, 59, 59, 999));
   try {
-    const news = await News.find({ createdAt: { $gte: startOfDay, $lte: endOfDay } });
+    const news = await News.find({
+      createdAt: { $gte: startOfDay, $lte: endOfDay }
+    });
     res.status(200).json(news);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -4,6 +4,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const newsRoutes = require("./routes/newsRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 const path = require('path');
 dotenv.config();
 connectDB();
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 // Route Handlers
+app.use("/api/contact", contactRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/news", newsRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
