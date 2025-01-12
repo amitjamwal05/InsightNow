@@ -1,5 +1,5 @@
 # +required Version of the endpoint configuration YAML
-schemaVersion: 1.0
+schemaVersion: 1.1
 
 # +required List of endpoints to create
 endpoints:
