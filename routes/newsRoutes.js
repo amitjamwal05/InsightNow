@@ -1,8 +1,8 @@
 const express = require("express");
-const { addNews, getAllNews, getTodayNews , getSingleNews} = require("../controllers/newsController");
+const { addNews, getAllNews, getTodayNews, getSingleNews } = require("../controllers/newsController");
 const protect = require("../middleware/authMiddleware");
 const News = require("../models/newsModel");
-const upload = require("../utils/multer"); 
+const upload = require("../utils/multer");
 const router = express.Router();
 
 // Public routes to view news
@@ -11,18 +11,25 @@ router.get("/", getAllNews);
 router.get("/:id", getSingleNews);  // '/:id' should come after '/today'
 
 // Admin-only route to add news
-router.post("/", protect, addNews);
-
-// Admin-only route to add news (including image upload)
 router.post("/", protect, upload.single('image'), async (req, res) => {
   try {
     const { title, description, author } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : ''; // Store image path in DB
+    let image = '';
+
+    // Handle image if present
+    if (req.file) {
+      image = `/uploads/${req.file.filename}`;
+    }
+
+    // Check if all required fields are present
+    if (!title || !description || !author || !image) {
+      return res.status(400).json({ message: "All fields are required including image." });
+    }
 
     const newNews = new News({
       title,
       description,
-      image, // Save the image path in the DB
+      image,
       author,
     });
 
@@ -51,7 +58,7 @@ router.put("/:id", protect, upload.single("image"), async (req, res) => {
 
     // Update image only if a new file is uploaded
     if (req.file) {
-      existingNews.image = `/uploads/${req.file.filename}`; // Store relative path
+      existingNews.image = `/uploads/${req.file.filename}`; // Update the image path
     }
 
     // Save updated document
@@ -61,7 +68,8 @@ router.put("/:id", protect, upload.single("image"), async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-  
+
+// Delete News Post
 router.delete("/:id", protect, async (req, res) => {
   try {
     const news = await News.findByIdAndDelete(req.params.id);
