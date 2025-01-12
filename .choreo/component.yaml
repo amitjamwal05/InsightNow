@@ -21,7 +21,7 @@ endpoints:
     # +optional Path to the schema definition file. Defaults to wild card route if not provided
     # This is only applicable to REST endpoint types.
     # The path should be relative to the Node.js project directory.
-    schemaFilePath: openapi.yaml
+    schemaFilePath: ./openapi.yaml
 
 # +optional Dependencies for this component
 dependencies:
